@@ -1,0 +1,1 @@
+export function PageHeader({ number, label, title, intro }: { number: string; label: string; title: string; intro: string }) { return <header className="page-header"><div className="page-kicker"><span>{number}</span>{label}</div><h1>{title}</h1><p>{intro}</p></header>; }

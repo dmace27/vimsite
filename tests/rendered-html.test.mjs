@@ -1,0 +1,42 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import test from "node:test";
+
+async function render(pathname = "/") {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-${pathname}`);
+  const { default: worker } = await import(workerUrl.href);
+  return worker.fetch(new Request(`http://localhost${pathname}`, { headers: { accept: "text/html" } }), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
+}
+
+test("server-renders the portfolio dashboard", async () => {
+  const response = await render();
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /<title>Daniel Mace — Developer<\/title>/i);
+  assert.match(html, /portfolio\.md/);
+  assert.match(html, /about/);
+  assert.match(html, /projects/);
+  assert.match(html, /toggle explorer/);
+  assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
+});
+
+test("server-renders every portfolio route", async () => {
+  for (const [path, title] of [["/about", "About me"], ["/projects", "Selected projects"], ["/blog", "Working notes"], ["/essays", "Longer thoughts"], ["/contact", "Let&#x27;s make contact"], ["/settings", "Settings"], ["/help", "LazyVim portfolio help"]]) {
+    const response = await render(path);
+    assert.equal(response.status, 200, path);
+    assert.match(await response.text(), new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), path);
+  }
+});
+
+test("defines the global keyboard commands", async () => {
+  const shell = await readFile(new URL("../components/app-shell.tsx", import.meta.url), "utf8");
+  const commands = await readFile(new URL("../data/commands.ts", import.meta.url), "utf8");
+  assert.match(shell, /event\.key === " "/);
+  assert.match(shell, /event\.key === ":"/);
+  assert.match(shell, /event\.key === "j"/);
+  assert.match(shell, /event\.key === "G"/);
+  assert.match(shell, /event\.key === "g"/);
+  assert.match(shell, /event\.key === "\/"/);
+  assert.match(commands, /searchItems/);
+});
