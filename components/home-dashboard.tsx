@@ -34,7 +34,7 @@ export function HomeDashboard() {
   return (
     <section className="lazy-home" aria-label="Portfolio dashboard">
       <div className="lazy-dashboard">
-        <div className="ascii-name" role="img" aria-label="Daniel Mace">
+        <div className="ascii-name" role="img" aria-label="Daniel Mace" aria-hidden="true">
           <div className="ascii-grid" aria-hidden="true">
             {asciiRows.flatMap((row, rowIndex) =>
               [...row].map((cell, columnIndex) => (
@@ -45,9 +45,6 @@ export function HomeDashboard() {
               )),
             )}
           </div>
-          <span className="sleep sleep-one">z</span>
-          <span className="sleep sleep-two">z</span>
-          <span className="sleep sleep-three">z</span>
         </div>
         <nav className="lazy-menu" aria-label="Main pages">
           {navigation.map((item, index) => {
@@ -70,7 +67,7 @@ export function HomeDashboard() {
           })}
         </nav>
         <div className="lazy-loaded">
-          <span></span> Neovim loaded <strong>7/7</strong> pages in <strong>24.16ms</strong>
+          <span></span> Neovim loaded <strong>7/7</strong> pages in <strong>24.67ms</strong>
         </div>
       </div>
     </section>

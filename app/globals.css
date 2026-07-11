@@ -1,19 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #1a1b26;
-  --bg-dark: #16161e;
-  --bg-ui: #1f2335;
-  --bg-line: #24283b;
-  --border: #292e42;
-  --fg: #a9b1d6;
-  --muted: #565f89;
-  --blue: #7aa2f7;
-  --cyan: #7dcfff;
-  --purple: #bb9af7;
-  --green: #9ece6a;
-  --yellow: #e0af68;
-  --red: #f7768e;
+  --bg: #1e1e24;
+  --bg-dark: #1e1e24;
+  --bg-ui: #1e1e24;
+  --bg-line: #24243e;
+  --border: #38414a;
+  --fg: #cacfd9;
+  --muted: #55606b;
+  --blue: #7fcef3;
+  --cyan: #56b6c2;
+  --purple: #d18ec2;
+  --green: #98c379;
+  --yellow: #e5c07b;
+  --red: #d19a66;
+  --string: #e09f67;
+  --visual: #2d3f56;
+  --cursor-line: #24243e;
+  --shadow: #38414a;
   color-scheme: dark;
 }
 * {
@@ -65,11 +69,12 @@ a {
   grid-template-rows: 28px minmax(0, 1fr) 24px;
   background: var(--bg);
 }
+/* Editor chrome and buffer surface */
 .tabline {
   display: flex;
   align-items: stretch;
   background: var(--bg-dark);
-  border-bottom: 1px solid #12131a;
+  border-bottom: 1px solid var(--border);
   color: var(--muted);
   user-select: none;
 }
@@ -195,9 +200,10 @@ a {
   position: absolute;
   bottom: 8px;
   left: 10px;
-  color: #3b4261;
+  color: var(--muted);
   font-size: 10px;
 }
+/* Buffer rows, relative numbers, and syntax tokens */
 .editor-buffer {
   min-width: max-content;
   padding: 8px 0 35vh;
@@ -215,15 +221,15 @@ a {
   position: relative;
 }
 .buffer-line:hover {
-  background: rgba(36, 40, 59, 0.35);
+  background: color-mix(in srgb, var(--visual) 35%, transparent);
 }
 .buffer-line[data-current] {
-  background: var(--bg-line);
+  background: var(--cursor-line);
 }
 .line-number {
   text-align: right;
   padding-right: 10px;
-  color: #3b4261;
+  color: var(--muted);
   user-select: none;
   font-size: 11px;
 }
@@ -267,7 +273,7 @@ a {
   font-weight: 600;
 }
 .tok-string {
-  color: var(--green);
+  color: var(--string);
 }
 .tok-type {
   color: var(--cyan);
@@ -437,7 +443,7 @@ a {
 /* LazyVim dashboard — screenshot-matched home surface */
 .nvim.is-home {
   grid-template-rows: minmax(0, 1fr);
-  background: #101014;
+  background: var(--bg);
 }
 .nvim.is-home > .tabline,
 .nvim.is-home > .statusline,
@@ -450,7 +456,7 @@ a {
 }
 .nvim.is-home .main-pane {
   height: 100%;
-  background: #101014;
+  background: var(--bg);
   overflow: auto;
 }
 .lazy-home {
@@ -459,8 +465,8 @@ a {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: #1b1b24;
-  color: #c0caf5;
+  background: var(--bg);
+  color: var(--fg);
   overflow: auto;
 }
 .lazy-dashboard {
@@ -476,25 +482,25 @@ a {
   position: relative;
   align-self: center;
   padding: 14px 0;
-  color: #7dcfff;
+  color: var(--blue);
 }
 .ascii-grid {
   display: grid;
   grid-template-columns: repeat(85, var(--pixel-w));
   grid-template-rows: repeat(5, var(--pixel-h));
-  filter: drop-shadow(3px 4px 0 #3b4261);
+  filter: drop-shadow(3px 4px 0 var(--shadow));
 }
 .pixel {
   width: var(--pixel-w);
   height: var(--pixel-h);
 }
 .pixel.on {
-  background: #7dcfff;
+  background: var(--blue);
   box-shadow: inset -1px 0 rgba(26, 27, 38, 0.14);
 }
 .sleep {
   position: absolute;
-  color: #7dcfff;
+  color: var(--blue);
   font-size: 16px;
   font-weight: 700;
 }
@@ -522,7 +528,7 @@ a {
   grid-template-columns: 38px 1fr 38px;
   align-items: center;
   padding: 0 8px;
-  color: #7dcfff;
+  color: var(--blue);
   font-size: 19px;
   cursor: pointer;
 }
@@ -540,35 +546,35 @@ a {
   height: 1.15em;
   margin-right: -0.55em;
   vertical-align: -0.22em;
-  background: #c0caf5;
+  background: var(--fg);
   animation: cursor-blink 1.1s step-end infinite;
 }
 .lazy-icon {
   font-size: 20px;
-  color: #7dcfff;
+  color: var(--blue);
 }
 .lazy-label {
   text-transform: capitalize;
 }
 .lazy-key {
   text-align: right;
-  color: #e0af68;
+  color: var(--yellow);
 }
 .lazy-menu a[data-current] .lazy-key {
-  color: #e0af68;
+  color: var(--yellow);
 }
 .lazy-loaded {
   align-self: center;
   margin-top: 17px;
-  color: #c0caf5;
+  color: var(--fg);
   font-size: 16px;
 }
 .lazy-loaded > span {
-  color: #e0af68;
+  color: var(--yellow);
   margin-right: 10px;
 }
 .lazy-loaded strong {
-  color: #7dcfff;
+  color: var(--blue);
   font-weight: 400;
 }
 @media (max-width: 760px) {
