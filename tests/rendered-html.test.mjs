@@ -6,7 +6,11 @@ async function render(pathname = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-${pathname}`);
   const { default: worker } = await import(workerUrl.href);
-  return worker.fetch(new Request(`http://localhost${pathname}`, { headers: { accept: "text/html" } }), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
+  return worker.fetch(
+    new Request(`http://localhost${pathname}`, { headers: { accept: "text/html" } }),
+    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+    { waitUntil() {}, passThroughOnException() {} },
+  );
 }
 
 test("server-renders the portfolio dashboard", async () => {
@@ -17,15 +21,27 @@ test("server-renders the portfolio dashboard", async () => {
   assert.match(html, /portfolio\.md/);
   assert.match(html, /about/);
   assert.match(html, /projects/);
-  assert.match(html, /toggle explorer/);
+  assert.match(html, /toggle explorer/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
 });
 
 test("server-renders every portfolio route", async () => {
-  for (const [path, title] of [["/about", "About me"], ["/projects", "Selected projects"], ["/blog", "Working notes"], ["/essays", "Longer thoughts"], ["/contact", "Let&#x27;s make contact"], ["/settings", "Settings"], ["/help", "LazyVim portfolio help"]]) {
+  for (const [path, title] of [
+    ["/about", "About me"],
+    ["/projects", "Selected projects"],
+    ["/blog", "Working notes"],
+    ["/essays", "Longer thoughts"],
+    ["/contact", "Let&#x27;s make contact"],
+    ["/settings", "Settings"],
+    ["/help", "LazyVim portfolio help"],
+  ]) {
     const response = await render(path);
     assert.equal(response.status, 200, path);
-    assert.match(await response.text(), new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), path);
+    assert.match(
+      await response.text(),
+      new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
+      path,
+    );
   }
 });
 

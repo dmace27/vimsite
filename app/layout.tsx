@@ -10,7 +10,8 @@ const jetbrains = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: { default: "Daniel Mace — Developer", template: "%s — Daniel Mace" },
-  description: "A keyboard-first portfolio about thoughtful software, systems, and the craft behind them.",
+  description:
+    "A keyboard-first portfolio about thoughtful software, systems, and the craft behind them.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

@@ -1,8 +1,65 @@
 "use client";
 import { useLocalSettings } from "@/hooks/use-local-settings";
-export function SettingsPanel() { const { settings, setSettings } = useLocalSettings(); const update = <K extends keyof typeof settings>(key: K, value: typeof settings[K]) => setSettings((current) => ({ ...current, [key]: value })); return <div className="settings-list">
-  <fieldset><legend>Interface contrast</legend><p>Choose how strongly panels separate from the background.</p><div className="segmented"><button className={settings.contrast === "soft" ? "active" : ""} onClick={() => update("contrast", "soft")}>Soft</button><button className={settings.contrast === "high" ? "active" : ""} onClick={() => update("contrast", "high")}>High</button></div></fieldset>
-  <fieldset><legend>Accent color</legend><p>Applied to focus, status, and selected items.</p><div className="swatches">{(["green", "blue", "purple"] as const).map((color) => <button key={color} className={`${color} ${settings.accent === color ? "active" : ""}`} onClick={() => update("accent", color)} aria-label={`${color} accent`} />)}</div></fieldset>
-  <label className="toggle-row"><span><strong>Reduce motion</strong><small>Minimize transitions and interface movement.</small></span><input type="checkbox" checked={settings.reducedMotion} onChange={(e) => update("reducedMotion", e.target.checked)} /></label>
-  <label className="toggle-row"><span><strong>Shortcut reminders</strong><small>Keep keyboard hints visible on the dashboard.</small></span><input type="checkbox" checked={settings.showHints} onChange={(e) => update("showHints", e.target.checked)} /></label>
-  </div>; }
+export function SettingsPanel() {
+  const { settings, setSettings } = useLocalSettings();
+  const update = <K extends keyof typeof settings>(key: K, value: (typeof settings)[K]) =>
+    setSettings((current) => ({ ...current, [key]: value }));
+  return (
+    <div className="settings-list">
+      <fieldset>
+        <legend>Interface contrast</legend>
+        <p>Choose how strongly panels separate from the background.</p>
+        <div className="segmented">
+          <button
+            className={settings.contrast === "soft" ? "active" : ""}
+            onClick={() => update("contrast", "soft")}
+          >
+            Soft
+          </button>
+          <button
+            className={settings.contrast === "high" ? "active" : ""}
+            onClick={() => update("contrast", "high")}
+          >
+            High
+          </button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Accent color</legend>
+        <p>Applied to focus, status, and selected items.</p>
+        <div className="swatches">
+          {(["green", "blue", "purple"] as const).map((color) => (
+            <button
+              key={color}
+              className={`${color} ${settings.accent === color ? "active" : ""}`}
+              onClick={() => update("accent", color)}
+              aria-label={`${color} accent`}
+            />
+          ))}
+        </div>
+      </fieldset>
+      <label className="toggle-row">
+        <span>
+          <strong>Reduce motion</strong>
+          <small>Minimize transitions and interface movement.</small>
+        </span>
+        <input
+          type="checkbox"
+          checked={settings.reducedMotion}
+          onChange={(e) => update("reducedMotion", e.target.checked)}
+        />
+      </label>
+      <label className="toggle-row">
+        <span>
+          <strong>Shortcut reminders</strong>
+          <small>Keep keyboard hints visible on the dashboard.</small>
+        </span>
+        <input
+          type="checkbox"
+          checked={settings.showHints}
+          onChange={(e) => update("showHints", e.target.checked)}
+        />
+      </label>
+    </div>
+  );
+}
