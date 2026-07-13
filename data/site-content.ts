@@ -3,7 +3,7 @@ import type { Project, Writing } from "@/types/site";
 export const profile = {
   name: "Daniel Mace",
   role: "Software developer & systems thinker",
-  location: "New York, USA",
+  location: "Waterloo, Ontario, Canada",
   email: "hello@danielmace.dev",
   intro: "I build calm, useful software at the intersection of design and engineering.",
   bio: [
@@ -45,7 +45,7 @@ export const projects: Project[] = [
 
 export const writing: Writing[] = [
   {
-    title: "The interface is a conversation",
+    title: "Ths interface is a conversation",
     excerpt: "What changes when we design software around continuity, context, and trust?",
     date: "Jun 18, 2026",
     readTime: "6 min",
