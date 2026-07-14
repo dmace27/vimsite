@@ -35,17 +35,24 @@ npm run build         # Create a production build
 
 ## Keyboard navigation
 
-| Key        | Action                         |
-| ---------- | ------------------------------ |
-| `j` / `k`  | Move down or up                |
-| `gg` / `G` | Jump to the first or last line |
-| `/`        | Search the current buffer      |
-| `n`        | Move to the next search result |
-| `Space e`  | Toggle the file explorer       |
-| `:`        | Open the command line          |
-| `Escape`   | Close the active prompt        |
+| Key                       | Action                                      |
+| ------------------------- | ------------------------------------------- |
+| `h` / `j` / `k` / `l`     | Move left, down, up, or right               |
+| `w` / `e` / `b`           | Move by words (`W`, `E`, `B` use WORDS)     |
+| `0` / `^` / `$`           | Move to the start, first text, or line end  |
+| `gg` / `G`                | Jump to the first or last line              |
+| `{count}{motion}`         | Repeat a motion, such as `5j` or `12e`      |
+| `v`                       | Enter visual mode and extend with motions   |
+| `f`, `F`, `t`, `T`        | Find a character on the current line        |
+| `Ctrl-d/u`, `Ctrl-f/b`    | Move half or full viewport                  |
+| `/` / `n`                 | Search the buffer / move to the next result |
+| `Space e` / `Space Space` | Toggle the explorer / find files            |
+| `Space` + dashboard key   | Open a dashboard page                       |
+| `:`                       | Open the command line                       |
+| `Escape`                  | Return to normal mode and clear key memory  |
 
-On the homepage, `a`, `p`, `b`, `e`, `c`, `s`, and `h` open their corresponding pages.
+The status line shows the active mode and recent keys. Incomplete counts and chords clear after
+900ms; completed commands remain visible for 1.4 seconds.
 
 ## Editing portfolio content
 

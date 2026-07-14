@@ -342,7 +342,7 @@ export function HelpBuffer() {
         {
           content: (
             <>
-              <Tok kind="type">j</Tok> move down one line
+              <Tok kind="type">h j k l</Tok> move left, down, up, and right
             </>
           ),
           indent: 1,
@@ -350,7 +350,7 @@ export function HelpBuffer() {
         {
           content: (
             <>
-              <Tok kind="type">k</Tok> move up one line
+              <Tok kind="type">w e b</Tok> move by words (<Tok kind="type">W E B</Tok> for WORDS)
             </>
           ),
           indent: 1,
@@ -367,6 +367,40 @@ export function HelpBuffer() {
           content: (
             <>
               <Tok kind="type">G</Tok> jump to last line
+            </>
+          ),
+          indent: 1,
+        },
+        {
+          content: (
+            <>
+              <Tok kind="type">5j 12e</Tok> prefix a motion with a count
+            </>
+          ),
+          indent: 1,
+        },
+        {
+          content: (
+            <>
+              <Tok kind="type">f F t T</Tok> find a character on the current line
+            </>
+          ),
+          indent: 1,
+        },
+        {},
+        { content: <Tok kind="keyword">## Modes</Tok> },
+        {
+          content: (
+            <>
+              <Tok kind="type">v</Tok> enter visual mode; move to extend the selection
+            </>
+          ),
+          indent: 1,
+        },
+        {
+          content: (
+            <>
+              <Tok kind="type">Esc</Tok> return to normal mode and clear pending keys
             </>
           ),
           indent: 1,
@@ -394,7 +428,8 @@ export function HelpBuffer() {
         {
           content: (
             <>
-              <Tok kind="type">space e</Tok> toggle explorer
+              <Tok kind="type">space e</Tok> toggle explorer; <Tok kind="type">space space</Tok>{" "}
+              find files
             </>
           ),
           indent: 1,

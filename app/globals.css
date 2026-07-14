@@ -281,6 +281,12 @@ a {
 .buffer-line[data-current] {
   background: var(--cursor-line);
 }
+.buffer-line[data-visual] {
+  background: var(--visual);
+}
+.buffer-line[data-visual][data-current] {
+  background: color-mix(in srgb, var(--visual) 78%, var(--cursor-line));
+}
 .line-number {
   text-align: right;
   padding-right: 10px;
@@ -297,19 +303,22 @@ a {
   user-select: none;
 }
 .line-content {
+  position: relative;
   padding-left: calc(var(--indent) * 2ch);
   white-space: pre;
   min-height: 24px;
 }
 .buffer-line[data-current] .line-content::before {
   content: "";
-  display: inline-block;
+  position: absolute;
+  z-index: 2;
+  left: calc(var(--indent) * 2ch + var(--cursor-offset, 0ch));
+  top: 0.34em;
   width: 0.62em;
   height: 1.25em;
-  vertical-align: -0.28em;
-  margin-right: -0.62em;
   background: var(--fg);
   opacity: 0.72;
+  pointer-events: none;
   animation: cursor-blink 1.1s step-end infinite;
 }
 .buffer-line[data-current] .line-content > *:first-child {
@@ -375,6 +384,9 @@ a {
   font-weight: 800;
   clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
 }
+.statusline .mode-visual {
+  background: var(--purple);
+}
 .branch {
   color: var(--purple);
 }
@@ -383,6 +395,17 @@ a {
 }
 .status-spacer {
   flex: 1;
+}
+.keystroke-memory {
+  min-width: 6ch;
+  max-width: 18ch;
+  overflow: hidden;
+  color: var(--muted);
+  text-align: right;
+  text-overflow: ellipsis;
+}
+.keystroke-memory.has-keys {
+  color: var(--yellow);
 }
 .statusline > span:last-child {
   padding-right: 10px;
@@ -737,16 +760,15 @@ a {
 
 /* LazyVim dashboard — screenshot-matched home surface */
 .nvim.is-home {
-  grid-template-rows: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) 24px;
   background: var(--bg);
 }
-.nvim.is-home > .tabline,
-.nvim.is-home > .statusline {
+.nvim.is-home > .tabline {
   display: none;
 }
 .nvim.is-home > .workspace {
   min-height: 0;
-  height: 100vh;
+  height: auto;
 }
 .nvim.is-home .main-pane {
   height: 100%;
@@ -833,13 +855,19 @@ a {
   border: 0;
   outline: none;
 }
+.lazy-menu a[data-visual] {
+  background: var(--visual);
+}
+.lazy-label {
+  position: relative;
+}
 .lazy-menu a[data-current] .lazy-label::before {
   content: "";
-  display: inline-block;
+  position: absolute;
+  left: var(--cursor-offset, 0ch);
+  top: 0.08em;
   width: 0.55em;
   height: 1.15em;
-  margin-right: -0.55em;
-  vertical-align: -0.22em;
   background: var(--fg);
   animation: cursor-blink 1.1s step-end infinite;
 }

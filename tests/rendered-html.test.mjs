@@ -66,6 +66,10 @@ test("defines the global keyboard commands", async () => {
   assert.match(shell, /<FuzzyFinder/);
   assert.match(shell, /event\.key === ":"/);
   assert.match(shell, /event\.key === "j"/);
+  assert.match(shell, /KEY_SEQUENCE_TIMEOUT_MS = 900/);
+  assert.match(shell, /COMMAND_MEMORY_TIMEOUT_MS = 1400/);
+  assert.match(shell, /event\.key === "v"/);
+  assert.match(shell, /countRef\.current/);
   assert.match(shell, /event\.key === "G"/);
   assert.match(shell, /event\.key === "g"/);
   assert.match(shell, /event\.key === "\/"/);
@@ -77,8 +81,12 @@ test("defines the global keyboard commands", async () => {
   assert.match(explorer, /event\.key === "j"/);
   assert.match(explorer, /event\.key === "k"/);
   assert.match(explorer, /event\.key === "Enter"/);
+  assert.match(explorer, /event\.key === "Backspace"/);
+  assert.match(explorer, /current\?\.node\.kind === "folder"/);
   assert.match(explorer, /focusRequest/);
   assert.match(styles, /\.explorer\.is-open\s*{[^}]*min-width: 260px;/s);
+  assert.match(styles, /\.buffer-line\[data-visual\]/);
+  assert.match(styles, /\.keystroke-memory/);
 
   for (const route of [
     "/about",
