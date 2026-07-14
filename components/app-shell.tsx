@@ -3,6 +3,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CommandLine } from "./command-line";
 import { ExplorerSidebar } from "./explorer-sidebar";
+import { FuzzyFinder } from "./fuzzy-finder";
 import { StatusLine } from "./status-line";
 import { navigation } from "@/data/navigation";
 
@@ -16,8 +17,10 @@ function editable(target: EventTarget | null) {
 export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [explorer, setExplorer] = useState(true);
+  const [explorer, setExplorer] = useState(false);
+  const [explorerFocusRequest, setExplorerFocusRequest] = useState(0);
   const [command, setCommand] = useState(false);
+  const [finder, setFinder] = useState(false);
   const [search, setSearch] = useState(false);
   const [query, setQuery] = useState("");
   const [activeLine, setActiveLine] = useState(0);
@@ -27,6 +30,27 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const gTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingG = useRef(false);
   const searchRef = useRef<HTMLInputElement>(null);
+
+  const setExplorerOpen = useCallback((open: boolean) => {
+    setExplorer(open);
+  }, []);
+
+  const closeExplorer = useCallback(() => {
+    setExplorerOpen(false);
+    requestAnimationFrame(() => document.getElementById("content")?.focus({ preventScroll: true }));
+  }, [setExplorerOpen]);
+
+  const toggleExplorer = useCallback(() => {
+    const opening = !explorer;
+    setExplorerOpen(opening);
+
+    if (opening) setExplorerFocusRequest((request) => request + 1);
+    else {
+      requestAnimationFrame(() =>
+        document.getElementById("content")?.focus({ preventScroll: true }),
+      );
+    }
+  }, [explorer, setExplorerOpen]);
 
   /**
    * Synchronizes the visual cursor, relative line numbers, and status line.
@@ -64,20 +88,29 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       if (event.key === "Escape") {
         setSearch(false);
         setCommand(false);
+        setFinder(false);
         setLeader(false);
         return;
       }
-      if (search || command || editable(event.target)) return;
+      if (search || command || finder || editable(event.target)) return;
       if (leader) {
         event.preventDefault();
         setLeader(false);
-        if (event.key === "e") setExplorer((v) => !v);
+        if (leaderTimer.current) clearTimeout(leaderTimer.current);
+        if (event.key === "e") toggleExplorer();
+        if (event.key === " ") setFinder(true);
         return;
       }
       if (event.key === " ") {
         event.preventDefault();
         setLeader(true);
         leaderTimer.current = setTimeout(() => setLeader(false), 800);
+        return;
+      }
+      if (
+        event.defaultPrevented ||
+        (event.target as HTMLElement | null)?.closest("[data-explorer-tree]")
+      ) {
         return;
       }
       if (event.key === ":") {
@@ -159,7 +192,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       if (leaderTimer.current) clearTimeout(leaderTimer.current);
       if (gTimer.current) clearTimeout(gTimer.current);
     };
-  }, [activeLine, command, leader, lineCount, pathname, query, router, search, syncLine]);
+  }, [
+    activeLine,
+    command,
+    finder,
+    leader,
+    lineCount,
+    pathname,
+    query,
+    router,
+    search,
+    syncLine,
+    toggleExplorer,
+  ]);
 
   const executeSearch = () => {
     setSearch(false);
@@ -182,13 +227,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {pathname === "/" ? "portfolio.md" : `${pathname.slice(1)}.md`}
         </span>
         <span className="tab-fill" />
-        <button onClick={() => setExplorer((v) => !v)} aria-label="Toggle explorer">
+        <button onClick={toggleExplorer} aria-label="Toggle explorer">
           
         </button>
       </div>
       <div className="workspace">
-        <ExplorerSidebar open={explorer} onClose={() => setExplorer(false)} />
-        <main id="content" className="main-pane">
+        <ExplorerSidebar
+          key={explorerFocusRequest}
+          open={explorer}
+          focusRequest={explorerFocusRequest}
+          onClose={closeExplorer}
+        />
+        <main id="content" className="main-pane" tabIndex={-1}>
           {children}
         </main>
       </div>
@@ -208,6 +258,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span className="command-hint">Enter to search · n for next</span>
         </div>
       )}
+      {finder && <FuzzyFinder onClose={() => setFinder(false)} />}
       {command && <CommandLine onClose={() => setCommand(false)} />}
       <StatusLine pathname={pathname} leader={leader} line={activeLine + 1} total={lineCount} />
     </div>

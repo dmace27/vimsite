@@ -1,5 +1,12 @@
 import { EditorBuffer, FileLink, Tok, type BufferLine } from "@/components/editor-buffer";
-import { profile, projects, writing } from "@/data/site-content";
+import {
+  getWritingEntryHref,
+  profile,
+  projects,
+  writing,
+  writingSections,
+} from "@/data/site-content";
+import type { Project, Writing } from "@/types/site";
 
 const frame = (name: string, body: BufferLine[]): BufferLine[] => [
   {
@@ -85,9 +92,9 @@ export function ProjectsBuffer() {
         content: (
           <>
             <Tok kind="keyword">##</Tok>{" "}
-            <Tok kind="heading">
+            <FileLink href={`/projects/${p.slug}`}>
               {String(i + 1).padStart(2, "0")}. {p.title}
-            </Tok>{" "}
+            </FileLink>{" "}
             <Tok kind="muted">[{p.year}]</Tok>
           </>
         ),
@@ -115,25 +122,57 @@ export function ProjectsBuffer() {
   return <EditorBuffer lines={frame("projects", body)} />;
 }
 
-export function WritingBuffer({ kind }: { kind: "Blog" | "Essay" }) {
-  const name = kind === "Blog" ? "blog" : "essays";
+export function WritingIndexBuffer() {
   const body: BufferLine[] = [
     {
       content: (
         <>
-          <Tok kind="keyword">#</Tok>{" "}
-          <Tok kind="heading">{kind === "Blog" ? "Working notes" : "Longer thoughts"}</Tok>
+          <Tok kind="keyword">#</Tok> <Tok kind="heading">Writing</Tok>
+        </>
+      ),
+      className: "title-line",
+    },
+    { content: <Tok kind="comment">&lt;!-- essays, blog posts, and working notes --&gt;</Tok> },
+    {},
+  ];
+
+  writingSections.forEach((section) =>
+    body.push(
+      {
+        content: (
+          <>
+            <Tok kind="keyword">󰝰</Tok> <FileLink href={section.href}>{section.label}/</FileLink>
+          </>
+        ),
+      },
+      { content: section.description, indent: 1 },
+      {},
+    ),
+  );
+
+  return <EditorBuffer lines={frame("writing", body)} />;
+}
+
+const writingHeadings: Record<Writing["category"], string> = {
+  Blog: "Working notes",
+  Essay: "Longer thoughts",
+  Note: "Notes",
+};
+
+export function WritingBuffer({ kind }: { kind: Writing["category"] }) {
+  const section = writingSections.find(({ category }) => category === kind);
+  const name = section?.label ?? "writing";
+  const body: BufferLine[] = [
+    {
+      content: (
+        <>
+          <Tok kind="keyword">#</Tok> <Tok kind="heading">{writingHeadings[kind]}</Tok>
         </>
       ),
       className: "title-line",
     },
     {
-      content: (
-        <Tok kind="comment">
-          &lt;!-- {kind === "Blog" ? "notes from work in progress" : "ideas given room to breathe"}{" "}
-          --&gt;
-        </Tok>
-      ),
+      content: <Tok kind="comment">&lt;!-- {section?.description.toLowerCase()} --&gt;</Tok>,
     },
     {},
   ];
@@ -144,7 +183,8 @@ export function WritingBuffer({ kind }: { kind: "Blog" | "Essay" }) {
         {
           content: (
             <>
-              <Tok kind="keyword">##</Tok> <FileLink href={`/${name}`}>{w.title}</FileLink>
+              <Tok kind="keyword">##</Tok>{" "}
+              <FileLink href={getWritingEntryHref(w)}>{w.title}</FileLink>
             </>
           ),
         },
@@ -160,7 +200,73 @@ export function WritingBuffer({ kind }: { kind: "Blog" | "Essay" }) {
         {},
       ),
     );
-  return <EditorBuffer lines={frame(name, body)} />;
+  return <EditorBuffer lines={frame(`writing/${name}`, body)} />;
+}
+
+export function ProjectDetailBuffer({ project }: { project: Project }) {
+  return (
+    <EditorBuffer
+      lines={frame(`projects/${project.slug}`, [
+        {
+          content: (
+            <>
+              <Tok kind="keyword">#</Tok> <Tok kind="heading">{project.title}</Tok>
+            </>
+          ),
+          className: "title-line",
+        },
+        {
+          content: (
+            <Tok kind="comment">
+              &lt;!-- {project.status.toLowerCase()} · {project.year} --&gt;
+            </Tok>
+          ),
+        },
+        {},
+        ...project.body.flatMap((paragraph) => [{ content: paragraph }, {}]),
+        {
+          content: (
+            <>
+              <Tok kind="type">stack</Tok> = [
+              {project.stack.map((item, index) => (
+                <span key={item}>
+                  <Tok kind="string">&quot;{item}&quot;</Tok>
+                  {index < project.stack.length - 1 ? ", " : ""}
+                </span>
+              ))}
+              ]
+            </>
+          ),
+        },
+      ])}
+    />
+  );
+}
+
+export function WritingDetailBuffer({ entry }: { entry: Writing }) {
+  return (
+    <EditorBuffer
+      lines={frame(`${getWritingEntryHref(entry).slice(1)}`, [
+        {
+          content: (
+            <>
+              <Tok kind="keyword">#</Tok> <Tok kind="heading">{entry.title}</Tok>
+            </>
+          ),
+          className: "title-line",
+        },
+        {
+          content: (
+            <Tok kind="comment">
+              &lt;!-- {entry.category.toLowerCase()} · {entry.date} · {entry.readTime} --&gt;
+            </Tok>
+          ),
+        },
+        {},
+        ...entry.body.flatMap((paragraph) => [{ content: paragraph }, {}]),
+      ])}
+    />
+  );
 }
 
 export function ContactBuffer() {

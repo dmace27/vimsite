@@ -12,7 +12,6 @@ pages to write content for
   - should have about me outside of work and school also
   - 
 - projects 
-- experience
 - writing
 - contact
 - settings
@@ -47,7 +46,6 @@ pages to write content for
 - fix name on landing page
 - change essays and blogs to writing page
 - add experience page
-- fix fuzzy find
 - fix the way buffers look
   - explorer tree should take full vertical precedence 
 

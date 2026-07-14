@@ -11,7 +11,7 @@ export function CommandLine({ onClose }: { onClose: () => void }) {
   useEffect(() => ref.current?.focus(), []);
   const run = () => {
     const name = value.trim().replace(/^:/, "").toLowerCase();
-    const hit = commands.find((item) => item.label.replace(" me", "") === name);
+    const hit = commands.find((item) => item.label.replace(" me", "").toLowerCase() === name);
     if (hit) {
       router.push(hit.href);
       onClose();

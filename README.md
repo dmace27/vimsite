@@ -29,6 +29,8 @@ npm run build         # Create a production build
 - `components/home-dashboard.tsx` renders the LazyVim dashboard and font-independent pixel banner.
 - `components/content/editor-pages.tsx` converts portfolio data into themed editor buffers.
 - `data/` contains navigation, commands, profile content, projects, and writing.
+- `app/writing/` groups essays, blog posts, and notes into nested folder pages.
+- `app/projects/[slug]/` renders individual project pages from the structured project data.
 - `hooks/` contains browser-local preference state.
 
 ## Keyboard navigation
@@ -47,6 +49,8 @@ On the homepage, `a`, `p`, `b`, `e`, `c`, `s`, and `h` open their corresponding 
 
 ## Editing portfolio content
 
-Update `data/site-content.ts` to change the biography, projects, writing, contact details, or social links. Update `data/navigation.ts` when adding or renaming a route.
+Update `data/site-content.ts` to change the biography, projects, writing, contact details, or
+social links. Project and writing slugs automatically become nested page URLs and explorer entries.
+Update `data/navigation.ts` when adding or renaming a top-level dashboard route.
 
 The name banner is a bitmap alphabet rendered as a CSS grid. Each filled and empty cell has an identical size, preventing Unicode block characters and fallback fonts from distorting its alignment.

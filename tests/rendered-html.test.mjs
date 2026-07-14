@@ -29,8 +29,12 @@ test("server-renders every portfolio route", async () => {
   for (const [path, title] of [
     ["/about", "About me"],
     ["/projects", "Selected projects"],
-    ["/blog", "Working notes"],
-    ["/essays", "Longer thoughts"],
+    ["/projects/northstar", "Northstar"],
+    ["/writing", "Writing"],
+    ["/writing/blogs", "Working notes"],
+    ["/writing/blogs/this-interface-is-a-conversation", "This interface is a conversation"],
+    ["/writing/essays", "Longer thoughts"],
+    ["/writing/notes", "Notes"],
     ["/contact", "Let&#x27;s make contact"],
     ["/settings", "Settings"],
     ["/help", "LazyVim portfolio help"],
@@ -48,11 +52,47 @@ test("server-renders every portfolio route", async () => {
 test("defines the global keyboard commands", async () => {
   const shell = await readFile(new URL("../components/app-shell.tsx", import.meta.url), "utf8");
   const commands = await readFile(new URL("../data/commands.ts", import.meta.url), "utf8");
+  const explorer = await readFile(
+    new URL("../components/explorer-sidebar.tsx", import.meta.url),
+    "utf8",
+  );
+  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  const generatedRoutes = await readFile(
+    new URL("../data/site-routes.generated.ts", import.meta.url),
+    "utf8",
+  );
   assert.match(shell, /event\.key === " "/);
+  assert.match(shell, /setFinder\(true\)/);
+  assert.match(shell, /<FuzzyFinder/);
   assert.match(shell, /event\.key === ":"/);
   assert.match(shell, /event\.key === "j"/);
   assert.match(shell, /event\.key === "G"/);
   assert.match(shell, /event\.key === "g"/);
   assert.match(shell, /event\.key === "\/"/);
   assert.match(commands, /searchItems/);
+  assert.match(commands, /siteRoutes/);
+  assert.match(explorer, /tree-folder-icon/);
+  assert.match(explorer, /writingSections/);
+  assert.match(explorer, /useState<Set<string>>\(\(\) => new Set\(\)\)/);
+  assert.match(explorer, /event\.key === "j"/);
+  assert.match(explorer, /event\.key === "k"/);
+  assert.match(explorer, /event\.key === "Enter"/);
+  assert.match(explorer, /focusRequest/);
+  assert.match(styles, /\.explorer\.is-open\s*{[^}]*min-width: 260px;/s);
+
+  for (const route of [
+    "/about",
+    "/contact",
+    "/help",
+    "/projects",
+    "/settings",
+    "/writing",
+    "/writing/blogs",
+    "/writing/essays",
+    "/writing/notes",
+  ]) {
+    assert.match(generatedRoutes, new RegExp(`"href": "${route}"`), route);
+  }
+
+  assert.doesNotMatch(generatedRoutes, /"href": "\/(?:blog|essays)"/);
 });

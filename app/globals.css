@@ -131,19 +131,27 @@ a {
   scrollbar-color: var(--muted) var(--bg-dark);
   scrollbar-width: thin;
 }
+.main-pane:focus {
+  outline: none;
+}
 .explorer {
   width: 0;
+  min-width: 0;
+  max-width: 0;
   overflow: hidden;
+  visibility: hidden;
   flex: none;
   background: var(--bg-dark);
   border-right: 1px solid transparent;
-  transition: width 0.15s ease;
   position: relative;
   white-space: nowrap;
 }
 .explorer.is-open {
-  width: 240px;
+  width: 260px;
+  min-width: 260px;
+  max-width: 260px;
   border-right-color: var(--border);
+  visibility: visible;
 }
 .explorer-heading {
   height: 32px;
@@ -173,28 +181,75 @@ a {
   font-weight: 700;
 }
 .explorer nav {
-  display: flex;
-  flex-direction: column;
+  max-height: calc(100% - 92px);
+  overflow-y: auto;
   padding: 4px 0;
+  scrollbar-color: var(--muted) transparent;
+  scrollbar-width: thin;
 }
-.explorer nav a {
+.tree-entry {
   height: 25px;
   display: flex;
   align-items: center;
-  padding: 0 10px 0 23px;
+  padding-left: calc(8px + var(--tree-depth) * 14px);
   color: var(--muted);
   font-size: 12px;
 }
-.explorer nav a::first-letter {
-  color: var(--blue);
-}
-.explorer nav a:hover {
+.tree-entry:hover {
   background: var(--bg-line);
+}
+.tree-entry.is-focused,
+.tree-entry:focus-visible {
+  background: var(--visual);
+  outline: none;
+  box-shadow: inset 2px 0 var(--cyan);
+}
+.tree-entry.is-focused .tree-link {
   color: var(--fg);
 }
-.explorer nav a.active {
-  background: var(--bg-line);
+.tree-toggle,
+.tree-spacer {
+  width: 17px;
+  flex: none;
+}
+.tree-toggle {
+  height: 25px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 11px;
+}
+.tree-toggle:hover,
+.tree-toggle:focus-visible {
+  color: var(--fg);
+}
+.tree-link {
+  min-width: 0;
+  height: 25px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+}
+.tree-link > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tree-link:hover {
+  color: var(--fg);
+}
+.tree-link.active {
   color: var(--cyan);
+}
+.tree-file-icon {
+  color: var(--blue);
+}
+.tree-folder-icon {
+  color: var(--yellow);
 }
 .explorer-foot {
   position: absolute;
@@ -333,6 +388,214 @@ a {
   padding-right: 10px;
   color: var(--fg);
 }
+
+/* Telescope-style site-wide fuzzy finder */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 40px;
+  background: rgba(18, 18, 23, 0.58);
+}
+.finder {
+  position: relative;
+  width: min(86vw, 1120px);
+  height: min(76vh, 780px);
+  min-height: 470px;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.48);
+}
+.finder-title {
+  position: absolute;
+  top: 0;
+  left: 42%;
+  z-index: 2;
+  padding: 0 12px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+.finder-close {
+  position: absolute;
+  top: 8px;
+  right: 11px;
+  z-index: 2;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 10px;
+}
+.finder-close:hover,
+.finder-close:focus-visible {
+  color: var(--cyan);
+}
+.finder-prompt {
+  height: 58px;
+  flex: none;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 8px 0;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--border);
+}
+.finder-prompt:focus-within {
+  box-shadow: inset 2px 0 var(--cyan);
+}
+.finder-chevron {
+  color: var(--cyan);
+  font-size: 22px;
+  line-height: 1;
+}
+.finder-prompt input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--fg);
+  caret-color: var(--cyan);
+  font-size: 15px;
+}
+.finder-prompt input::placeholder {
+  color: var(--muted);
+}
+.finder-count {
+  padding-right: 28px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.finder-results {
+  min-height: 190px;
+  max-height: 45%;
+  flex: 0 1 45%;
+  overflow-y: auto;
+  margin: 0 8px;
+  padding: 8px 0 12px;
+  scrollbar-color: var(--muted) transparent;
+  scrollbar-width: thin;
+}
+.finder-results button {
+  width: 100%;
+  min-height: 31px;
+  display: grid;
+  grid-template-columns: 26px max-content minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 3px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  text-align: left;
+  cursor: pointer;
+}
+.finder-results button:hover,
+.finder-results button.selected {
+  background: var(--visual);
+}
+.finder-results button.selected {
+  color: #e6e9ef;
+}
+.finder-results strong {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.finder-file-icon {
+  color: var(--cyan);
+  font-size: 15px;
+}
+.finder-path {
+  overflow: hidden;
+  color: var(--muted);
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.finder-results button.selected .finder-path {
+  color: var(--fg);
+}
+.finder-empty {
+  margin: 18px 12px;
+  color: var(--muted);
+}
+.finder-preview-title {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--fg);
+  font-size: 13px;
+  font-weight: 800;
+}
+.finder-preview-title::before,
+.finder-preview-title::after {
+  height: 1px;
+  content: "";
+  background: var(--border);
+}
+.finder-preview-title::before {
+  width: 40%;
+}
+.finder-preview-title::after {
+  flex: 1;
+}
+.finder-preview {
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  padding: 12px 8px 8px;
+}
+.finder-preview p {
+  min-height: 28px;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  margin: 0;
+  color: var(--fg);
+  line-height: 1.5;
+}
+.finder-preview p > span {
+  padding-right: 12px;
+  color: var(--muted);
+  text-align: right;
+  user-select: none;
+}
+.finder-preview strong {
+  color: var(--yellow);
+}
+.finder-preview em {
+  color: var(--cyan);
+  font-style: normal;
+}
+.finder-footer {
+  height: 28px;
+  flex: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+  padding: 0 12px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 10px;
+}
+.finder-footer span:nth-child(2) {
+  color: var(--cyan);
+}
+
 .vim-command,
 .command-wrap {
   position: fixed;
@@ -409,6 +672,8 @@ a {
   }
   .explorer.is-open {
     width: min(280px, 82vw);
+    min-width: min(280px, 82vw);
+    max-width: min(280px, 82vw);
   }
   .buffer-line {
     grid-template-columns: 42px 10px minmax(540px, 1fr);
@@ -429,6 +694,36 @@ a {
   .command-hint {
     display: none;
   }
+  .overlay {
+    padding: 20px 12px;
+  }
+  .finder {
+    width: 100%;
+    height: min(78vh, 680px);
+    min-height: 430px;
+  }
+  .finder-title {
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .finder-prompt {
+    height: 50px;
+  }
+  .finder-count {
+    padding-right: 24px;
+  }
+  .finder-path {
+    display: none;
+  }
+  .finder-results button {
+    grid-template-columns: 24px minmax(0, 1fr);
+  }
+  .finder-preview-title::before {
+    width: 24%;
+  }
+  .finder-footer span:first-child {
+    display: none;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -446,8 +741,7 @@ a {
   background: var(--bg);
 }
 .nvim.is-home > .tabline,
-.nvim.is-home > .statusline,
-.nvim.is-home .explorer {
+.nvim.is-home > .statusline {
   display: none;
 }
 .nvim.is-home > .workspace {

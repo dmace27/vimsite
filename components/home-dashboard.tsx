@@ -5,8 +5,7 @@ import { navigation } from "@/data/navigation";
 const icons: Record<string, string> = {
   about: "󰋙",
   projects: "󰏗",
-  blog: "󰂺",
-  essays: "󰈙",
+  writing: "󰈙",
   contact: "󰇮",
   settings: "󰒓",
   help: "󰞋",
@@ -67,7 +66,11 @@ export function HomeDashboard() {
           })}
         </nav>
         <div className="lazy-loaded">
-          <span></span> Neovim loaded <strong>7/7</strong> pages in <strong>24.67ms</strong>
+          <span></span> Neovim loaded{" "}
+          <strong>
+            {navigation.length}/{navigation.length}
+          </strong>{" "}
+          pages in <strong>24.67ms</strong>
         </div>
       </div>
     </section>
