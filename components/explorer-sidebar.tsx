@@ -79,11 +79,15 @@ export function ExplorerSidebar({
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
   const [cursorHref, setCursorHref] = useState(explorerTree[0].href);
   const rowRefs = useRef(new Map<string, HTMLDivElement>());
-  const restoreFocusAfterNavigation = useRef(false);
+  const focusBufferAfterNavigation = useRef(false);
   const visibleNodes = useMemo(() => visibleTree(explorerTree, expanded), [expanded]);
 
   const focusRow = (href: string) => {
     requestAnimationFrame(() => rowRefs.current.get(href)?.focus({ preventScroll: true }));
+  };
+
+  const focusBuffer = () => {
+    requestAnimationFrame(() => document.getElementById("content")?.focus({ preventScroll: true }));
   };
 
   const toggleFolder = (href: string) => {
@@ -101,8 +105,9 @@ export function ExplorerSidebar({
       return;
     }
 
-    restoreFocusAfterNavigation.current = true;
+    focusBufferAfterNavigation.current = true;
     router.push(node.href);
+    focusBuffer();
   };
 
   const moveCursor = (offset: number) => {
@@ -122,10 +127,10 @@ export function ExplorerSidebar({
   }, [focusRequest, open]);
 
   useEffect(() => {
-    if (!open || !restoreFocusAfterNavigation.current) return;
-    restoreFocusAfterNavigation.current = false;
-    focusRow(cursorHref);
-  }, [cursorHref, open, pathname]);
+    if (!focusBufferAfterNavigation.current) return;
+    focusBufferAfterNavigation.current = false;
+    focusBuffer();
+  }, [pathname]);
 
   return (
     <aside
@@ -158,6 +163,13 @@ export function ExplorerSidebar({
             event.stopPropagation();
             const current = visibleNodes.find(({ node }) => node.href === cursorHref);
             if (current) activateNode(current.node);
+          } else if (event.key === "Backspace") {
+            event.preventDefault();
+            event.stopPropagation();
+            const current = visibleNodes.find(({ node }) => node.href === cursorHref);
+            if (current?.node.kind === "folder" && expanded.has(current.node.href)) {
+              toggleFolder(current.node.href);
+            }
           }
         }}
       >
@@ -181,6 +193,7 @@ export function ExplorerSidebar({
               aria-selected={isFocused}
               tabIndex={isFocused ? 0 : -1}
               onFocus={() => setCursorHref(node.href)}
+              onMouseEnter={() => setCursorHref(node.href)}
               onClick={() => setCursorHref(node.href)}
             >
               {isFolder ? (
@@ -204,7 +217,8 @@ export function ExplorerSidebar({
                 aria-current={pathname === node.href ? "page" : undefined}
                 onClick={() => {
                   setCursorHref(node.href);
-                  restoreFocusAfterNavigation.current = true;
+                  focusBufferAfterNavigation.current = true;
+                  focusBuffer();
                 }}
               >
                 <span
@@ -219,7 +233,7 @@ export function ExplorerSidebar({
           );
         })}
       </nav>
-      <div className="explorer-foot">j/k move · enter open · space e close</div>
+      <div className="explorer-foot">j/k move · enter open · ⌫ collapse · space e close</div>
     </aside>
   );
 }

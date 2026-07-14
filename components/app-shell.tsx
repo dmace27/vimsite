@@ -335,12 +335,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         return;
       }
       if (search || command || finder || editable(event.target)) return;
-      if (
-        event.defaultPrevented ||
-        (event.target as HTMLElement | null)?.closest("[data-explorer-tree]")
-      ) {
-        return;
-      }
 
       if (leader) {
         event.preventDefault();
@@ -356,6 +350,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           }
         }
         showCompleted(sequence);
+        return;
+      }
+
+      if (event.key === " " && modeRef.current === "normal") {
+        event.preventDefault();
+        setLeader(true);
+        showPending("<Space>");
+        return;
+      }
+
+      if (
+        event.defaultPrevented ||
+        (event.target as HTMLElement | null)?.closest("[data-explorer-tree]")
+      ) {
         return;
       }
 
@@ -396,13 +404,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           showCompleted(`<C-${key}>`);
           return;
         }
-      }
-
-      if (event.key === " " && modeRef.current === "normal") {
-        event.preventDefault();
-        setLeader(true);
-        showPending("<Space>");
-        return;
       }
 
       if (/^\d$/u.test(event.key) && (event.key !== "0" || countRef.current)) {
@@ -626,10 +627,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       if (countRef.current || visualChainRef.current) clearSequence();
     };
 
-    window.addEventListener("keydown", onKey);
+    window.addEventListener("keydown", onKey, true);
     document.addEventListener("click", click);
     return () => {
-      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("keydown", onKey, true);
       document.removeEventListener("click", click);
     };
   }, [

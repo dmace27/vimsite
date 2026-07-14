@@ -4,16 +4,16 @@ export const profile = {
   name: "Daniel Mace",
   role: "Software developer & systems thinker",
   location: "Waterloo, Ontario, Canada",
-  email: "hello@danielmace.dev",
+  email: "danielmacebusiness@gmail.com",
   intro: "I build calm, useful software at the intersection of design and engineering.",
   bio: [
     "I am a software developer who cares about the details people feel: fast feedback, clear language, and interfaces that stay out of the way.",
     "My work moves between product engineering, design systems, and developer tooling. Away from the keyboard, I read, write, and keep a running list of questions worth exploring.",
   ],
   socials: [
-    { label: "GitHub", href: "https://github.com/" },
-    { label: "LinkedIn", href: "https://www.linkedin.com/" },
-    { label: "Email", href: "mailto:hello@danielmace.dev" },
+    { label: "GitHub", href: "https://github.com/dmace27" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/daniel-mace1" },
+    { label: "Email", href: "mailto:daneilmacebusiness@gmail.com" },
   ],
 };
 

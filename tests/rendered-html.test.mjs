@@ -62,6 +62,7 @@ test("defines the global keyboard commands", async () => {
     "utf8",
   );
   assert.match(shell, /event\.key === " "/);
+  assert.match(shell, /addEventListener\("keydown", onKey, true\)/);
   assert.match(shell, /setFinder\(true\)/);
   assert.match(shell, /<FuzzyFinder/);
   assert.match(shell, /event\.key === ":"/);
@@ -85,6 +86,8 @@ test("defines the global keyboard commands", async () => {
   assert.match(explorer, /event\.key === "Enter"/);
   assert.match(explorer, /event\.key === "Backspace"/);
   assert.match(explorer, /current\?\.node\.kind === "folder"/);
+  assert.match(explorer, /document\.getElementById\("content"\)\?\.focus/);
+  assert.match(explorer, /focusBufferAfterNavigation/);
   assert.match(explorer, /focusRequest/);
   assert.match(styles, /\.explorer\.is-open\s*{[^}]*min-width: 260px;/s);
   assert.match(styles, /\.buffer-line\[data-visual\]/);

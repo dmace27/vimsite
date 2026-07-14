@@ -3,7 +3,6 @@
 ### vim navigation -------- 
 - add left and right scrolling with h and l 
 - add total vim nav with e b and w
-- add tree nav
 
 
 ### content ------
@@ -16,17 +15,6 @@ pages to write content for
 - contact
 - settings
 - help
-- quit
-
-
-### home page menu
-- about
-- projects
-- writing
-- contact
-- settings
-- help
-- quit
 
 
 
@@ -36,7 +24,6 @@ pages to write content for
 - add buffer tabs
   - buffer tab for my resume - rendered inside of the site
 - recruiter mode
-- folder pages
 - global leader key menu
   - shortcuts for links
 -
@@ -44,8 +31,6 @@ pages to write content for
 
 ### fixes
 - fix name on landing page
-- change essays and blogs to writing page
-- add experience page
 - fix the way buffers look
   - explorer tree should take full vertical precedence 
 
@@ -58,3 +43,6 @@ pages to write content for
   - links to other pages
   - interactive parts
   -> thinking a <u> key shortcut 
+
+
+  I want to implement full vim navigation for the site. Setup a system that keeps track of the keys that the user recently pressed and what mode the user is in. There should be both normal and visual mode that is kept track of on the bottom bar. i want the user to be able to chain commands together like 5j, or 12e or vgg. Define an amount of time and different combinations where the last command/keystrokes should be cleared from the "memory"
