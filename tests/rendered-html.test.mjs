@@ -70,6 +70,8 @@ test("defines the global keyboard commands", async () => {
   assert.match(shell, /COMMAND_MEMORY_TIMEOUT_MS = 1400/);
   assert.match(shell, /event\.key === "v"/);
   assert.match(shell, /countRef\.current/);
+  assert.match(shell, /pathname === "\/"/);
+  assert.match(shell, /entry\.shortcut === event\.key\.toLowerCase\(\)/);
   assert.match(shell, /event\.key === "G"/);
   assert.match(shell, /event\.key === "g"/);
   assert.match(shell, /event\.key === "\/"/);

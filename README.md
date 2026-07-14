@@ -47,7 +47,7 @@ npm run build         # Create a production build
 | `Ctrl-d/u`, `Ctrl-f/b`    | Move half or full viewport                  |
 | `/` / `n`                 | Search the buffer / move to the next result |
 | `Space e` / `Space Space` | Toggle the explorer / find files            |
-| `Space` + dashboard key   | Open a dashboard page                       |
+| Dashboard letter          | Open a dashboard page from the homepage     |
 | `:`                       | Open the command line                       |
 | `Escape`                  | Return to normal mode and clear key memory  |
 

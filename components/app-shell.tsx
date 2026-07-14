@@ -359,6 +359,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      if (
+        pathname === "/" &&
+        modeRef.current === "normal" &&
+        !countRef.current &&
+        !pendingGRef.current &&
+        !pendingFindRef.current
+      ) {
+        const item = navigation.find((entry) => entry.shortcut === event.key.toLowerCase());
+        if (item) {
+          event.preventDefault();
+          showCompleted(event.key.toLowerCase());
+          router.push(item.href);
+          return;
+        }
+      }
+
       const pendingFind = pendingFindRef.current;
       if (pendingFind) {
         event.preventDefault();
@@ -621,6 +637,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     command,
     finder,
     leader,
+    pathname,
     query,
     renderCursor,
     resetVim,

@@ -60,7 +60,7 @@ export function HomeDashboard() {
                   {icons[key]}
                 </span>
                 <span className="lazy-label">{item.label.replace(" me", "")}</span>
-                <span className="lazy-key">␠{item.shortcut}</span>
+                <span className="lazy-key">{item.shortcut}</span>
               </Link>
             );
           })}
